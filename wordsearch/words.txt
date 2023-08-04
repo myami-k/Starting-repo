@@ -1,0 +1,5 @@
+africa:acirfa
+europe:eporue
+america:acirema
+asia:aisa
+oceania:ainaeco

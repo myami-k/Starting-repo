@@ -1,13 +1,11 @@
 
 
 def main_function():
-    file_words_input = input("The file containing the words: ")
+    file_words_input = str(input("The file containing the words: "))
     dictionary_words = words_function(file_words_input)
-
-    file_puzzle_input = input("The file containing the puzzle: ")
+    file_puzzle_input = str(input("The file containing the puzzle: "))
     puzzle_function(file_puzzle_input)
-
-    direction_input = input("The direction you'll be looking for: ")
+    direction_input = str(input("The direction you'll be looking for: "))
     direction_function(direction_input, dictionary_words, file_puzzle_input)
 
 
@@ -19,7 +17,6 @@ def words_function(prompt):
         except FileNotFoundError:
             print('Invalid words file')
             exit()
-
     dictionary_words = {}
     for lines in fp_words:
         key, value = lines.split(":")
@@ -37,13 +34,11 @@ def puzzle_function(prompt):
         except FileNotFoundError:
             print('Invalid puzzle file')
             exit()
-
     print(fp_puzzle)
 
 
 def direction_function(prompt, dictionary, puzzle_path):
     list_puzzle = open(puzzle_path).read().splitlines()
-
     while True:
         if prompt == "h":
             horizontal_function(list_puzzle, dictionary)
@@ -51,6 +46,7 @@ def direction_function(prompt, dictionary, puzzle_path):
             vertical_function(list_puzzle, dictionary)
         else:
             print('Invalid direction')
+        break
 
 
 def horizontal_function(list_puzzle, dictionary):
@@ -60,7 +56,6 @@ def horizontal_function(list_puzzle, dictionary):
         length = len(row_list)
         col_pos = 1
         row_pos += 1
-
         for start in range(length):
             finder = ""
             for letters in row_list:
@@ -82,7 +77,6 @@ def vertical_function(list_puzzle, dictionary):
             col_list.append(row_list[scale])
         row_pos = 1
         col_pos += 1
-        
         for start in range(length):
             finder = ""
             for letters in col_list:

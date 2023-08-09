@@ -1,93 +1,71 @@
-import random
 
 
-def choose_game():
+def game():
+    user_turns()
+
+
+def user_turns():
+    user_id, second_user_id = "X", "O"  # x o
+    grid_list = [[None, None, None], [None, None, None], [None, None, None]]
     while True:
-        choose = input(f"2 players or computer? [2/pc]\n> ")
-        if choose == "2":
-            game("X", "O", None)
-        elif choose == "pc":
-            game("X", None, "O")
+        # first user turn
+        guest_move(grid_list, user_id)
+        if is_win(user_id, grid_list):  #
+            print(f'{user_id} has won')
+            exit()
+        # second user turn
+        guest_move(grid_list, second_user_id)
+        if is_win(second_user_id, grid_list):  # if the returned value from is_win is True, then it prints out
+            print(f'{second_user_id} has won')
+            exit()
 
 
-def game(user_id, second_user_id, pc_id):
-    count = 0
-    grid_list = ["a", "b", "c",
-                 "d", "e", "f",
-                 "g", "h", "i"]
-    grid_board = " a | b | c " \
-                 "\n---|---|---" \
-                 "\n d | e | f " \
-                 "\n---|---|---" \
-                 "\n g | h | i "
+def guest_move(grid, guest_id):
     while True:
-        user = user_move(grid_list, grid_board)
-        grid_list, grid_board = grid_updates(user, user_id, grid_list, grid_board, count)
-        if second_user_id is None:
-            pc = bot_move(grid_list)
-            grid_list, grid_board = grid_updates(pc, pc_id, grid_list, grid_board, count)
-        else:
-            second_user = user_move(grid_list, grid_board)
-            grid_list, grid_board = grid_updates(second_user, second_user_id, grid_list, grid_board, count)
+        count = 0
+        if count == 9:  # if they played 9 times it stops the game (no positions open)
+            exit()
+        user_input = str(input(f'\n{grid[0]}\n{grid[1]}\n{grid[2]}\n{guest_id}: '))
+        if user_input in ["11", "12", "13", "21", "22", "23", "31", "32", "33"]:  # limited positions
+            # if the user gives a higher number -> out
+            if move_return(user_input, guest_id, grid):  # then if move_return return true it assigns
+                grid = move_return(user_input, guest_id, grid)  # it assigns grid to the returned value which is in func
+                return grid
+        count += 1
 
 
-def user_move(grid, board):
-    while True:
-        user_input = str(input(f'{board}\n> '))
-        if user_input in grid:
-            if user_input not in ["X", "O"]:
-                return user_input
+def move_return(guest, guest_id, grid):
+    guest = list(guest)  # getting the row and the col separated in a list then assigning them to row and col var
+    row = int(guest[0]) - 1  # because the input could be row 1 col 2 but the real numbers should be row 0 and col 1
+    col = int(guest[1]) - 1
+    if grid[row][col] is None:  # checking if a position is open
+        grid[row][col] = guest_id
+        return True, grid
 
 
-def bot_move(grid):
-    while True:
-        pc_input = str(random.choice(grid))
-        if pc_input not in ["X", "O"]:
-            return pc_input
+def is_win(guest_id, grid):
+    # diagonal is_win loop:
+    if (grid[0][0] == guest_id and grid[1][1] == guest_id and grid[2][2] == guest_id)\
+            or (grid[0][0] == guest_id and grid[1][1] == guest_id and grid[2][2] == guest_id):  # manual stuff
+        return True
+    # horizontal is_win loop:
+    guest_count = 0
+    for x in grid:  # which is all the arrays inside (2d) the main array [ [ ], [ ], [ ] ]
+        for y in x:  # which is all the characters inside the inside arrays [ ]
+            if y == guest_id:  # for example if y is equal to "X" it adds 1 to the count
+                guest_count += 1
+        if guest_count == 3:  # if three consecutive "X" (example) appears in a row, it returns True
+            return True
+        guest_count = 0
+    # vertical is_win loop:
+    for x in range(len(grid)):  # which is the length of the array (so it loop through three times)
+        for y in grid:  # which is all the characters inside the inside arrays
+            if y[x - 1] == guest_id:  # then it compares the first character of the first row, the second and the last
+                guest_count += 1
+        if guest_count == 3:
+            return True
+        guest_count = 0
+    return False  # <- when nothing is returned, it obviously returns False
 
 
-def grid_updates(guest, guest_id, grid, board, count):
-    grid = grid_list_update(guest, guest_id, grid)
-    board = grid_board_update(guest, guest_id, board)
-    is_win(guest_id, grid, count)
-    return grid, board
-
-
-def grid_list_update(guest, guest_id, grid):
-    x = []
-    for characters in grid:
-        if characters != guest:
-            x.append(characters)
-        elif characters == guest:
-            x.append(guest_id)
-    grid = x
-    return grid
-
-
-def grid_board_update(guest, guest_id, board):
-    board = str(board).replace(guest, guest_id)
-    return board
-
-
-def is_win(guest_id, grid, count):
-    count += 1
-    if (grid[0] == guest_id and grid[1] == guest_id and grid[2] == guest_id) \
-            or (grid[3] == guest_id and grid[4] == guest_id and grid[5] == guest_id) \
-            or (grid[6] == guest_id and grid[7] == guest_id and grid[8] == guest_id):
-        print(f"{guest_id} has won in horizontal!")
-        exit()
-    elif (grid[0] == guest_id and grid[3] == guest_id and grid[6] == guest_id) \
-            or (grid[1] == guest_id and grid[4] == guest_id and grid[7] == guest_id) \
-            or (grid[2] == guest_id and grid[5] == guest_id and grid[8] == guest_id):
-        print(f"{guest_id} has won in vertical!")
-        exit()
-    elif (grid[0] == guest_id and grid[4] == guest_id and grid[8] == guest_id) \
-            or (grid[2] == guest_id and grid[4] == guest_id and grid[6] == guest_id):
-        print(f"{guest_id} has won in diagonal!")
-        exit()
-    elif count == 9:
-        print(f"Draw!")
-    return count
-
-
-choose_game()
+game()

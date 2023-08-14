@@ -3,11 +3,11 @@
 def menu():
     while True:
         # choice for path in menu
-        main_menu = ["LIST", "ADD", "DELETE", "QUIT"]
-        main_input = input(f"\n\n╷---------------------------------╷"
-                           f"\n│              MENU               │"
-                           f"\n│                                 │\n│{main_menu}│"
-                           f"\n╵---------------------------------╵\n> ").upper()
+        main_menu = ["LIST", "ADD", "DELETE", "Q"]
+        main_input = input(f"\n\n╷------------------------------╷"
+                           f"\n│            MENU              │"
+                           f"\n│                              │\n│{main_menu}│"
+                           f"\n╵------------------------------╵\n> ").upper()
         # getting lists
         if main_input == main_menu[0]:
             list_display()
@@ -29,73 +29,73 @@ def get_lower(prompt):  # function -> return the str (lower) input
 def list_display():
     fp = open("clients.txt").read().splitlines()
     # choice for filters
-    main_display = ["PAID", "NOT PAID", "ANY", "FILTER", "QUIT"]
+    main_display = ["PAID", "NOT PAID", "ANY", "FILTER", "Q"]
     while True:
-        main_input = input(f"\n\n╷---------------------------------------------╷"
-                           f"\n│                    LIST                     │"
-                           f"\n│                                             │\n│{main_display}│"
-                           f"\n╵---------------------------------------------╵\n> ").upper()
-        if main_input == main_display[4]:
-            quit(list_display())
-        if main_input in main_display:
-            break
-    # overall display ╷ │
-    print("\n" + "╷-------------------------" * 10 + "╷" + "\n│DATE:                    │N° CLIENT:               "
-                                                           "│NAME:                    │N° BILL:                 "
-                                                           "│NET:                     │PAID:                    "
-                                                           "│PAID DATE:               │METHOD:                  "
-                                                           "│BANK:                    │N° CHQ:                  │"
-                                                           "\n" + "│-------------------------" * 10 + "│")
-    # choice for paid filter
-    if main_input == main_display[0]:
-        for lines in fp:
-            x = lines.split(":")
-            if x[5] == "yes":  # x5 for paid state
+        main_input = input(f"\n\n╷------------------------------------------╷"
+                           f"\n│                  LIST                    │"
+                           f"\n│                                          │\n│{main_display}│"
+                           f"\n╵------------------------------------------╵\n> ").upper()
+        # overall display ╷ │
+        if main_input != main_display[4] and main_input in main_display:
+            print("\n" + "╷------------╷------------╷-------------------------╷------------╷------------╷------------"
+                         "╷------------╷------------╷------------╷------------╷"
+                         "\n│DATE:       │N° CLIENT:  │NAME:                    "
+                         "│N° BILL:    │NET:        │PAID:       │PAID DATE:  │METHOD:     │BANK:       │N° CHQ:     │"
+                         "\n" + "│------------│------------│-------------------------│------------│------------│-------"
+                                "-----"
+                         "│------------│------------│------------│------------│")
+        # choice for paid filter
+        if main_input == main_display[0]:
+            for lines in fp:
+                x = lines.split(":")
+                if x[5] == "y":  # x5 for paid state
+                    paint(lines)
+        # choice for not paid filter
+        elif main_input == main_display[1]:
+            for lines in fp:
+                x = lines.split(":")
+                if x[5] == "n":  # x5 for not paid state
+                    paint(lines)
+        # choice for no filter
+        elif main_input == main_display[2]:
+            for lines in fp:
                 paint(lines)
-    # choice for not paid filter
-    elif main_input == main_display[1]:
-        for lines in fp:
-            x = lines.split(":")
-            if x[5] == "no":  # x5 for not paid state
-                paint(lines)
-    # choice for no filter
-    elif main_input == main_display[2]:
-        for lines in fp:
-            paint(lines)
-    # choice for special filter
-    elif main_input == main_display[3]:
-        while True:
-            filter_user = get_lower(f"[date/ncl/pay]: ")
+        # choice for special filter
+        elif main_input == main_display[3]:
+            while True:
+                filter_user = get_lower(f"[date/n°client/paid date]: ")
 
-            if filter_user == "date":  # choice for date filter
-                filter_date = get_lower(f"Date: ")
-                for lines in fp:
-                    x = lines.split(":")
-                    if x[0] == filter_date:  # x0 for date
-                        paint(lines)
-
-                break
-
-            elif filter_user == "ncl":  # choice for n°client filter
-                filter_number = get_lower(f"N° Client: ")
-                for lines in fp:
-                    x = lines.split(":")
-                    if x[1] == filter_number:  # x1 for n°client
-                        paint(lines)
-
-                break
-
-            elif filter_user == "pay":  # choice for paid date filter
-                filter_paid_date = get_lower(f"Paid date: ")
-                for lines in fp:
-                    x = lines.split(":")
-                    if x[5] == "yes":  # first seeing if the list is equal to paid
-                        # I made this to not get the list index out of range
-                        if x[6] == filter_paid_date:  # x6 for paid date
+                if filter_user == "date":  # choice for date filter
+                    filter_date = get_lower(f"Date: ")
+                    for lines in fp:
+                        x = lines.split(":")
+                        if x[0] == filter_date:  # x0 for date
                             paint(lines)
 
-                break
-    print("\n")
+                    break
+
+                elif filter_user == "n°client":  # choice for n°client filter
+                    filter_number = get_lower(f"N° Client: ")
+                    for lines in fp:
+                        x = lines.split(":")
+                        if x[1] == filter_number:  # x1 for n°client
+                            paint(lines)
+
+                    break
+
+                elif filter_user == "paid date":  # choice for paid date filter
+                    filter_paid_date = get_lower(f"Paid date: ")
+                    for lines in fp:
+                        x = lines.split(":")
+                        if x[5] == "yes":  # first seeing if the list is equal to paid
+                            # I made this to not get the list index out of range
+                            if x[6] == filter_paid_date:  # x6 for paid date
+                                paint(lines)
+
+                    break
+        elif main_input == main_display[4]:
+            break
+        print("\n")
 
 
 def add_clients():  # add clients, add the date, the name, the number, the bill etc..
@@ -162,14 +162,22 @@ def paint(prompt):
     x = prompt.split(":")
     output = "│"
     for element in x:
-        if len(element) < 10:
+        if int(x.index(element)) == 2:
             while True:
                 if len(element) != 25:
                     element += " "
                 else:
                     break
+        else:
+            if len(element) < 12:
+                while True:
+                    if len(element) != 12:
+                        element += " "
+                    else:
+                        break
         output += element + "│"
-    output += "\n" + "│-------------------------" * 10 + "│"
+    output += "\n" + "╵------------╵------------╵-------------------------╵------------╵------------╵------------" \
+                     "╵------------╵------------╵------------╵------------╵"
     print(output)
 
 

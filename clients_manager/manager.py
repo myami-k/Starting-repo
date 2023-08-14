@@ -4,7 +4,10 @@ def menu():
     while True:
         # choice for path in menu
         main_menu = ["LIST", "ADD", "DELETE", "QUIT"]
-        main_input = input(f"{main_menu}\n> ").upper()
+        main_input = input(f"\n\n╷---------------------------------╷"
+                           f"\n│              MENU               │"
+                           f"\n│                                 │\n│{main_menu}│"
+                           f"\n╵---------------------------------╵\n> ").upper()
         # getting lists
         if main_input == main_menu[0]:
             list_display()
@@ -26,12 +29,23 @@ def get_lower(prompt):  # function -> return the str (lower) input
 def list_display():
     fp = open("clients.txt").read().splitlines()
     # choice for filters
-    main_display = ["PAID", "NOT PAID", "ANY", "FILTER"]
-    main_input = input(f"{main_display}\n> ").upper()
+    main_display = ["PAID", "NOT PAID", "ANY", "FILTER", "QUIT"]
+    while True:
+        main_input = input(f"\n\n╷---------------------------------------------╷"
+                           f"\n│                    LIST                     │"
+                           f"\n│                                             │\n│{main_display}│"
+                           f"\n╵---------------------------------------------╵\n> ").upper()
+        if main_input == main_display[4]:
+            quit(list_display())
+        if main_input in main_display:
+            break
     # overall display ╷ │
-    print("\n" + "╷------------" * 10 + "╷" + "\n│DATE:       │N° CLIENT:  │NAME:       │N° BILL:    │NET:        │"
-                                              "PAID:       │PAID DATE:  │METHOD:     │BANK:       │N° CHQ:     │"
-                                              "\n" + "│------------" * 10 + "│")
+    print("\n" + "╷-------------------------" * 10 + "╷" + "\n│DATE:                    │N° CLIENT:               "
+                                                           "│NAME:                    │N° BILL:                 "
+                                                           "│NET:                     │PAID:                    "
+                                                           "│PAID DATE:               │METHOD:                  "
+                                                           "│BANK:                    │N° CHQ:                  │"
+                                                           "\n" + "│-------------------------" * 10 + "│")
     # choice for paid filter
     if main_input == main_display[0]:
         for lines in fp:
@@ -51,7 +65,7 @@ def list_display():
     # choice for special filter
     elif main_input == main_display[3]:
         while True:
-            filter_user = get_lower(f"[date/n°client/paid date]: ")
+            filter_user = get_lower(f"[date/ncl/pay]: ")
 
             if filter_user == "date":  # choice for date filter
                 filter_date = get_lower(f"Date: ")
@@ -62,7 +76,7 @@ def list_display():
 
                 break
 
-            elif filter_user == "n°client":  # choice for n°client filter
+            elif filter_user == "ncl":  # choice for n°client filter
                 filter_number = get_lower(f"N° Client: ")
                 for lines in fp:
                     x = lines.split(":")
@@ -71,7 +85,7 @@ def list_display():
 
                 break
 
-            elif filter_user == "paid date":  # choice for paid date filter
+            elif filter_user == "pay":  # choice for paid date filter
                 filter_paid_date = get_lower(f"Paid date: ")
                 for lines in fp:
                     x = lines.split(":")
@@ -93,9 +107,9 @@ def add_clients():  # add clients, add the date, the name, the number, the bill 
     client_net_payable = get_lower(f"Net payable: ")
 
     while True:  # if paid or not + paid date
-        paid_or_not = get_lower(f"Paid? [yes/no]: ")
+        paid_or_not = get_lower(f"Paid? [y/n]: ")
 
-        if paid_or_not == "yes":  # path of paid choice
+        if paid_or_not == "y":  # path of paid choice
             paid_date = get_lower(f"Paid date: ")
 
             while True:  # esp/chq/vir
@@ -122,7 +136,7 @@ def add_clients():  # add clients, add the date, the name, the number, the bill 
 
             break
 
-        elif paid_or_not == "no":  # path of not paid choice
+        elif paid_or_not == "n":  # path of not paid choice
             with open("clients.txt", "a") as fp:  # end of not paid choice
                 fp.write(f"{client_date}:{client_number}:{client_name}:{client_bill}:{client_net_payable}"
                          f":{paid_or_not}\n")
@@ -146,16 +160,16 @@ def delete_clients():  # zero
 
 def paint(prompt):
     x = prompt.split(":")
-    output = "|"
+    output = "│"
     for element in x:
         if len(element) < 10:
             while True:
-                if len(element) != 12:
+                if len(element) != 25:
                     element += " "
                 else:
                     break
         output += element + "│"
-    output += "\n" + "│------------" * 10 + "│"
+    output += "\n" + "│-------------------------" * 10 + "│"
     print(output)
 
 

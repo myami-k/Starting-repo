@@ -22,11 +22,19 @@ def menu():
             exit("You left")
 
 
-def get_lower(prompt, number):  # function -> return the str (lower) input
+def get_lower(prompt, number, type_in):  # function -> return the str (lower) input
     while True:
-        x = str(input(prompt)).lower()
-        if len(x) < int(number):
-            return x
+        x = input(prompt)
+        if type_in == "str":
+            if len(x) < int(number):
+                return x.lower()
+        elif type_in == "int":
+            try:
+                int(x)
+                if len(x) < int(number):
+                    return str(x)
+            except ValueError:
+                pass
 
 
 def list_display():
@@ -68,10 +76,10 @@ def list_display():
         # choice for special filter
         elif main_input == main_display[3]:
             while True:
-                filter_user = get_lower(f"[date/n°client/paid date]: ", 12)
+                filter_user = get_lower(f"[date/n°client/paid date]: ", 12, "str")
 
                 if filter_user == "date":  # choice for date filter
-                    filter_date = get_lower(f"Date: ", 12)
+                    filter_date = get_lower(f"Date: ", 12, "str")
                     for lines in fp:
                         x = lines.split(":")
                         if x[0] == filter_date:  # x0 for date
@@ -80,7 +88,7 @@ def list_display():
                     break
 
                 elif filter_user == "n°client":  # choice for n°client filter
-                    filter_number = get_lower(f"N° Client: ", 12)
+                    filter_number = get_lower(f"N° Client: ", 12, "int")
                     for lines in fp:
                         x = lines.split(":")
                         if x[1] == filter_number:  # x1 for n°client
@@ -89,7 +97,7 @@ def list_display():
                     break
 
                 elif filter_user == "paid date":  # choice for paid date filter
-                    filter_paid_date = get_lower(f"Paid date: ", 12)
+                    filter_paid_date = get_lower(f"Paid date: ", 12, "str")
                     for lines in fp:
                         x = lines.split(":")
                         if x[5] == "yes":  # first seeing if the list is equal to paid
@@ -105,24 +113,24 @@ def list_display():
 
 def add_clients():  # add clients, add the date, the name, the number, the bill etc..
     # str (lowercase) inputs
-    client_date = get_lower(f"Date: ", 12)
-    client_number = get_lower(f"N° Client: ", 12)
-    client_name = get_lower(f"Name: ", 50)
-    client_bill = get_lower(f"N° Bill: ", 12)
-    client_net_payable = get_lower(f"Net payable: ", 12)
+    client_date = get_lower(f"Date: ", 12, "str")
+    client_number = get_lower(f"N° Client: ", 12, "int")
+    client_name = get_lower(f"Name: ", 50, "str")
+    client_bill = get_lower(f"N° Bill: ", 12, "int")
+    client_net_payable = get_lower(f"Net payable: ", 12, "int")
 
     while True:  # if paid or not + paid date
-        paid_or_not = get_lower(f"Paid? [y/n]: ", 12)
+        paid_or_not = get_lower(f"Paid? [y/n]: ", 12, "str")
 
         if paid_or_not == "y":  # path of paid choice
-            paid_date = get_lower(f"Paid date: ", 12)
+            paid_date = get_lower(f"Paid date: ", 12, "str")
 
             while True:  # esp/chq/vir
-                esp_chq_vir = get_lower(f"[esp/chq/vir]: ", 12)
+                esp_chq_vir = get_lower(f"[esp/chq/vir]: ", 12, "str")
 
                 if esp_chq_vir == "chq":  # chq input + bt/soc/bp
-                    chq_bank = get_lower(f"[bt/soc/bp]: ", 12)
-                    chq_number = get_lower(f"N° Chq: ", 12)
+                    chq_bank = get_lower(f"[bt/soc/bp]: ", 12, "str")
+                    chq_number = get_lower(f"N° Chq: ", 12, "int")
 
                     with open("clients.txt", "a") as fp:  # end of paid choice
                         fp.write(f"{client_date}:{client_number}:{client_name}:{client_bill}:{client_net_payable}"
@@ -170,7 +178,7 @@ def paint(prompt):
         if int(x.index(element)) == 2:
             while True:
                 if len(element) != 50:
-                    element += " "
+                    element = element.upper() + " "
                 else:
                     break
         else:
